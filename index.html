@@ -276,7 +276,7 @@
     const league = leagueSelect.value || '';
     const params = new URLSearchParams({ date_str: date, offset: '0', limit: '100', sort_by: 'confidence' });
     if (league) params.set('league', league);
-    const API_URL = 'TU_WKLEJ_URL_DO_BACKENDU';
+    const API_URL = 'https://goaledge-backend.onrender.com';
     const res = await fetch(`${API_URL}/matches?${params.toString()}`);
     if (!res.ok) throw new Error(`API error ${res.status}`);
     return res.json();
