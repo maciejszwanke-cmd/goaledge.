@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoalEdge Predictor App</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@500,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --font-display: 'Cabinet Grotesk', 'Inter', sans-serif;
+      --font-body: 'Satoshi', 'Inter', sans-serif;
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-surface-offset:#f3f0ec; --color-border:#d4d1ca; --color-divider:#dcd9d5;
+      --color-text:#28251d; --color-text-muted:#6f6c66; --color-text-faint:#aaa79f; --color-text-inverse:#f9f8f4;
+      --color-primary:#01696f; --color-primary-hover:#0c4e54; --color-primary-highlight:#cedcd8; --color-success:#437a22; --color-warning:#964219;
+      --radius-sm:0.375rem; --radius-md:0.5rem; --radius-lg:0.75rem; --radius-xl:1rem; --radius-full:9999px;
+      --shadow-sm:0 1px 2px rgba(40,37,29,.06); --shadow-md:0 10px 24px rgba(40,37,29,.08); --shadow-lg:0 20px 48px rgba(40,37,29,.12);
+      --content-default:1120px;
+    }
+    [data-theme="dark"] {
+      --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d; --color-surface-offset:#1d1c1a; --color-border:#393836; --color-divider:#262523;
+      --color-text:#cdccca; --color-text-muted:#8a8884; --color-text-faint:#5a5957; --color-text-inverse:#2b2a28;
+      --color-primary:#4f98a3; --color-primary-hover:#227f8b; --color-primary-highlight:#313b3b; --color-success:#6daa45; --color-warning:#bb653b;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.2); --shadow-md:0 10px 24px rgba(0,0,0,.28); --shadow-lg:0 20px 48px rgba(0,0,0,.35);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+    body{min-height:100dvh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:var(--text-base);line-height:1.6}
+    button,input,select{font:inherit;color:inherit}
+    .shell{max-width:var(--content-default);margin:0 auto;padding:var(--space-4)}
+    .skip-link{position:absolute;left:-9999px;top:auto}.skip-link:focus{left:var(--space-4);top:var(--space-4);background:var(--color-primary);color:var(--color-text-inverse);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);z-index:99}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:var(--space-4) 0 var(--space-8);gap:var(--space-4)}
+    .brand{display:flex;align-items:center;gap:var(--space-3)}
+    .brand-mark{width:42px;height:42px;padding:8px;border-radius:12px;background:var(--color-surface);border:1px solid var(--color-border);box-shadow:var(--shadow-sm)}
+    .brand-name{font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.03em}
+    .theme-toggle{min-width:44px;min-height:44px;border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-surface);display:grid;place-items:center}
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-6);align-items:stretch}
+    .hero-copy,.hero-panel,.result-card,.metric,.score-card,.note,.leagues{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+    .hero-copy{padding:clamp(var(--space-6),5vw,var(--space-10));display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-2))}
+    .eyebrow{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em;width:max-content}
+    h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1.02;letter-spacing:-.04em;max-width:12ch;margin-top:var(--space-5)}
+    .hero-copy p{color:var(--color-text-muted);max-width:48ch;margin-top:var(--space-4)}
+    .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-top:var(--space-8)}
+    .mini-stat{padding:var(--space-4);background:var(--color-surface-offset);border-radius:calc(var(--radius-xl) - var(--space-3));border:1px solid color-mix(in srgb,var(--color-text) 10%, transparent)}
+    .mini-stat strong{display:block;font-family:var(--font-display);font-size:var(--text-lg)}
+    .mini-stat span{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)}
+    .hero-panel{padding:var(--space-6);display:grid;gap:var(--space-5)}
+    .panel-heading{display:flex;justify-content:space-between;gap:var(--space-4);align-items:start}
+    .panel-heading h2{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:-.03em}
+    .panel-heading p{font-size:var(--text-sm);color:var(--color-text-muted);max-width:34ch}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)}
+    .field{display:grid;gap:var(--space-2)}
+    .field label{font-size:var(--text-sm);font-weight:700}
+    .field input,.field select{min-height:48px;border:1px solid var(--color-border);background:var(--color-surface-2);padding:0 var(--space-4);border-radius:var(--radius-lg)}
+    .field input:focus-visible,.field select:focus-visible,.action:focus-visible,.theme-toggle:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px}
+    .action{min-height:52px;border-radius:var(--radius-lg);background:var(--color-primary);color:var(--color-text-inverse);font-weight:700;padding:0 var(--space-5)}
+    .action:hover{background:var(--color-primary-hover)}
+    .subtle{font-size:var(--text-xs);color:var(--color-text-muted)}
+    main{padding-block:var(--space-8) var(--space-12)}
+    .results{display:grid;gap:var(--space-5);margin-top:var(--space-6)}
+    .result-card{padding:var(--space-6)}
+    .result-head{display:flex;justify-content:space-between;align-items:start;gap:var(--space-4);padding-bottom:var(--space-5);border-bottom:1px solid var(--color-divider)}
+    .result-head h3{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:-.03em}
+    .pill{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .pill.high{background:color-mix(in srgb,var(--color-success) 18%, transparent);color:var(--color-success)}
+    .pill.medium{background:color-mix(in srgb,var(--color-warning) 18%, transparent);color:var(--color-warning)}
+    .pill.low{background:color-mix(in srgb,var(--color-primary) 18%, transparent);color:var(--color-primary)}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-top:var(--space-5)}
+    .metric{padding:var(--space-4)}
+    .metric span{display:block;font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)}
+    .metric strong{display:block;font-family:var(--font-display);font-size:var(--text-lg);margin-top:var(--space-2)}
+    .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-top:var(--space-5)}
+    .score-card{padding:var(--space-4);background:var(--color-surface-2)}
+    .score-card .score{font-family:var(--font-display);font-size:var(--text-lg)}
+    .grid-bottom{display:grid;grid-template-columns:1.1fr .9fr;gap:var(--space-5);margin-top:var(--space-6)}
+    .note,.leagues{padding:var(--space-5)}
+    .note h4,.leagues h4{font-family:var(--font-display);font-size:var(--text-base);margin-bottom:var(--space-3)}
+    .leagues ul{list-style:none;display:grid;gap:var(--space-3)}
+    .league-row{display:flex;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-divider)}
+    .league-row:last-child{border-bottom:none;padding-bottom:0}
+    .muted{color:var(--color-text-muted)}
+    .empty{padding:var(--space-8);border:1px dashed var(--color-border);border-radius:var(--radius-xl);color:var(--color-text-muted);background:var(--color-surface)}
+    @media (max-width: 920px){.hero,.grid-bottom,.metrics,.score-grid,.form-grid,.hero-grid{grid-template-columns:1fr}.result-head,.panel-heading,.topbar{align-items:flex-start;flex-direction:column}.shell{padding:var(--space-3)}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="GoalEdge">
+        <svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <path d="M12 32C12 20.95 20.95 12 32 12C43.05 12 52 20.95 52 32C52 43.05 43.05 52 32 52C20.95 52 12 43.05 12 32Z" stroke="currentColor" stroke-width="4"></path>
+          <path d="M26 23L40 32L26 41V23Z" fill="currentColor"></path>
+        </svg>
+        <div>
+          <div class="brand-name">GoalEdge</div>
+          <div class="subtle">Mini app dla predykcji V1</div>
+        </div>
+      </div>
+      <button class="theme-toggle" data-theme-toggle aria-label="Zmień motyw"></button>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-label="Wprowadzenie i formularz">
+        <div class="hero-copy">
+          <div>
+            <span class="eyebrow">Poisson + forma 10 meczów</span>
+            <h1>Wpisz mecz i zobacz probabilistyczny typ GoalEdge V1.</h1>
+            <p>Aplikacja pokazuje expected goals, rynki 1X2 i Over/Under 2.5 oraz trzy najbardziej prawdopodobne wyniki końcowe.</p>
+          </div>
+          <div class="hero-grid" aria-label="Kluczowe cechy modelu">
+            <div class="mini-stat"><span>Rynki</span><strong>1X2 + O/U</strong></div>
+            <div class="mini-stat"><span>Silnik</span><strong>Poisson</strong></div>
+            <div class="mini-stat"><span>Wejście</span><strong>Forma 10</strong></div>
+          </div>
+        </div>
+
+        <section class="hero-panel" aria-labelledby="predictor-title">
+          <div class="panel-heading">
+            <div>
+              <h2 id="predictor-title">Uruchom predykcję</h2>
+              <p>Na tym etapie działa demonstracyjnie na wbudowanych danych przykładowych dla czterech głównych lig.</p>
+            </div>
+          </div>
+
+          <form id="predictor-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="league">Liga</label>
+                <select id="league" name="league">
+                  <option value="E0">Premier League</option>
+                  <option value="D1">Bundesliga</option>
+                  <option value="SP1">La Liga</option>
+                  <option value="F1">Ligue 1</option>
+                </select>
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="date">Dzień</label>
+                <select id="date" name="date"></select>
+              </div>
+            </div>
+            <div style="margin-top: var(--space-5); display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center;">
+              <button class="action" type="submit">Pokaż mecze i predykcje</button>
+              <span class="subtle">Wyświetla wszystkie mecze z wybranego dnia wraz z produkcjami demo.</span>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section class="results" aria-live="polite" aria-atomic="true">
+        <div id="results-list"></div>
+        <div class="result-card" id="result-card">
+          <div class="result-head">
+            <div>
+              <p class="subtle">Predykcja meczu</p>
+              <h3 id="match-title">Arsenal vs Brighton</h3>
+              <p class="muted" id="league-label">Premier League · GoalEdge V1</p>
+            </div>
+            <div class="pill high" id="confidence-pill">High confidence</div>
+          </div>
+
+          <div class="metrics">
+            <article class="metric"><span>Główny typ</span><strong id="main-tip">Over 2.5</strong></article>
+            <article class="metric"><span>Pewność</span><strong id="confidence-value">74.9%</strong></article>
+            <article class="metric"><span>xG gospodarzy</span><strong id="home-xg">2.258</strong></article>
+            <article class="metric"><span>xG gości</span><strong id="away-xg">1.660</strong></article>
+          </div>
+
+          <div class="metrics" style="margin-top: var(--space-4);">
+            <article class="metric"><span>1</span><strong id="prob-1">51.39%</strong></article>
+            <article class="metric"><span>X</span><strong id="prob-x">20.13%</strong></article>
+            <article class="metric"><span>2</span><strong id="prob-2">28.42%</strong></article>
+            <article class="metric"><span>Over 2.5</span><strong id="prob-over">74.90%</strong></article>
+          </div>
+
+          <div class="score-grid" id="score-grid">
+            <article class="score-card"><div class="subtle">Najbardziej prawdopodobny wynik</div><div class="score">2-1</div><div class="muted">8.41%</div></article>
+            <article class="score-card"><div class="subtle">Drugi wynik</div><div class="score">1-1</div><div class="muted">7.45%</div></article>
+            <article class="score-card"><div class="subtle">Trzeci wynik</div><div class="score">2-2</div><div class="muted">6.98%</div></article>
+          </div>
+
+          <div class="grid-bottom">
+            <aside class="note">
+              <h4>Jak czytać wynik</h4>
+              <p id="insight-text">Model najsilniej wspiera rynek bramkowy, bo suma oczekiwanych goli jest wysoka, a oba zespoły mają profil sprzyjający otwartemu meczowi.</p>
+            </aside>
+            <aside class="leagues">
+              <h4>Obsługiwane ligi demo</h4>
+              <ul>
+                <li class="league-row"><span>Premier League</span><span class="muted">E0</span></li>
+                <li class="league-row"><span>Bundesliga</span><span class="muted">D1</span></li>
+                <li class="league-row"><span>La Liga</span><span class="muted">SP1</span></li>
+                <li class="league-row"><span>Ligue 1</span><span class="muted">F1</span></li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+
+<script>
+  const themeButton = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  function updateThemeIcon() {
+    themeButton.innerHTML = theme === 'dark'
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+  }
+  root.setAttribute('data-theme', theme);
+  updateThemeIcon();
+  themeButton.addEventListener('click', () => {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', theme);
+    updateThemeIcon();
+  });
+
+  const dateSelect = document.getElementById('date');
+  const leagueSelect = document.getElementById('league');
+  const resultsList = document.getElementById('results-list');
+  const form = document.getElementById('predictor-form');
+
+  const days = Array.from({length: 8}, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+  days.forEach((d, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx === 0 ? 'today' : idx === 1 ? 'tomorrow' : d.toISOString().slice(0,10);
+    opt.textContent = idx === 0 ? 'Dziś' : idx === 1 ? 'Jutro' : d.toLocaleDateString('pl-PL', { weekday: 'long', day: '2-digit', month: '2-digit' });
+    dateSelect.appendChild(opt);
+  });
+
+  function pct(v){ return `${(v * 100).toFixed(2)}%`; }
+  function confidenceClass(v){ return v >= 0.75 ? 'high' : v >= 0.55 ? 'medium' : 'low'; }
+
+  function cardHtml(m) {
+    return `
+      <div class="result-card" style="margin-top: var(--space-5);">
+        <div class="result-head">
+          <div>
+            <p class="subtle">${m.utc_date ? new Date(m.utc_date).toLocaleString('pl-PL') : ''}</p>
+            <h3>${m.home_team} vs ${m.away_team}</h3>
+            <p class="muted">${m.league_name} · ${m.status}</p>
+          </div>
+          <div class="pill ${confidenceClass(m.confidence)}">${pct(m.confidence)}</div>
+        </div>
+        <div class="metrics">
+          <article class="metric"><span>Typ</span><strong>${m.main_tip}</strong></article>
+          <article class="metric"><span>1</span><strong>${pct(m.probabilities['1'] ?? 0)}</strong></article>
+          <article class="metric"><span>X</span><strong>${pct(m.probabilities['X'] ?? 0)}</strong></article>
+          <article class="metric"><span>2</span><strong>${pct(m.probabilities['2'] ?? 0)}</strong></article>
+        </div>
+        <div class="metrics" style="margin-top: var(--space-4);">
+          <article class="metric"><span>Over 2.5</span><strong>${pct(m.probabilities['Over 2.5'] ?? 0)}</strong></article>
+          <article class="metric"><span>xG H</span><strong>${Number(m.home_xg).toFixed(3)}</strong></article>
+          <article class="metric"><span>xG A</span><strong>${Number(m.away_xg).toFixed(3)}</strong></article>
+          <article class="metric"><span>Wynik #1</span><strong>${m.top_scores?.[0]?.score ?? '-'}</strong></article>
+        </div>
+        <div class="score-grid" style="margin-top: var(--space-4);">
+          ${(m.top_scores || []).slice(0,3).map((s, i) => `<article class="score-card"><div class="subtle">Top ${i+1}</div><div class="score">${s.score}</div><div class="muted">${pct(s.probability ?? 0)}</div></article>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  async function loadMatches() {
+    const date = dateSelect.value;
+    const league = leagueSelect.value || '';
+    const params = new URLSearchParams({ date_str: date, offset: '0', limit: '100', sort_by: 'confidence' });
+    if (league) params.set('league', league);
+    const API_URL = 'TU_WKLEJ_URL_DO_BACKENDU';
+    const res = await fetch(`${API_URL}/matches?${params.toString()}`);
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    return res.json();
+  }
+
+  async function render() {
+    resultsList.innerHTML = '<div class="empty">Ładowanie meczów...</div>';
+    try {
+      const data = await loadMatches();
+      const matches = (data.groups || []).flatMap(g => g.matches || []);
+      if (!matches.length) {
+        resultsList.innerHTML = '<div class="empty">Brak meczów dla wybranego dnia.</div>';
+        return;
+      }
+      resultsList.innerHTML = matches.map(cardHtml).join('');
+    } catch (err) {
+      resultsList.innerHTML = `<div class="empty">Nie udało się pobrać danych z backendu. Upewnij się, że FastAPI działa na http://127.0.0.1:8000.</div>`;
+    }
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); render(); });
+  dateSelect.addEventListener('change', render);
+  leagueSelect.addEventListener('change', render);
+  render();
+</script>
+
+</body>
+</html>
