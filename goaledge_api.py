@@ -20,10 +20,18 @@ DATA.mkdir(exist_ok=True)
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "")
 
 LEAGUE_MAP = {
-    "E0": {"competition": "PL", "name": "Premier League"},
-    "D1": {"competition": "BL1", "name": "Bundesliga"},
-    "SP1": {"competition": "PD", "name": "La Liga"},
-    "F1": {"competition": "FL1", "name": "Ligue 1"},
+    "WC": {"competition": "WC", "name": "FIFA World Cup"},
+    "CL": {"competition": "CL", "name": "UEFA Champions League"},
+    "BL1": {"competition": "BL1", "name": "Bundesliga"},
+    "DED": {"competition": "DED", "name": "Eredivisie"},
+    "BSA": {"competition": "BSA", "name": "Campeonato Brasileiro Série A"},
+    "PD": {"competition": "PD", "name": "Primera Division"},
+    "FL1": {"competition": "FL1", "name": "Ligue 1"},
+    "ELC": {"competition": "ELC", "name": "Championship"},
+    "PPL": {"competition": "PPL", "name": "Primeira Liga"},
+    "EC": {"competition": "EC", "name": "European Championship"},
+    "SA": {"competition": "SA", "name": "Serie A"},
+    "PL": {"competition": "PL", "name": "Premier League"},
 }
 COMP_TO_LOCAL = {v["competition"]: k for k, v in LEAGUE_MAP.items()}
 
