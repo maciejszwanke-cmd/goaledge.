@@ -9,8 +9,8 @@ import pandas as pd
 
 from goaledge_integrated_v1 import import_top4, build_feature_table, predict_match
 
-HOST = os.getenv("GOALEdge_HOST", "127.0.0.1")
-PORT = int(os.getenv("GOALEdge_PORT", "8000"))
+HOST = os.getenv("GOALEdge_HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "10000"))
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 DATA.mkdir(exist_ok=True)
