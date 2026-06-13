@@ -285,15 +285,17 @@
   async function render() {
     resultsList.innerHTML = '<div class="empty">Ładowanie meczów...</div>';
     try {
-      const data = await loadMatches();
-      const matches = (data.groups || []).flatMap(g => g.matches || []);
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 15000));
+      const data = await Promise.race([loadMatches(), timeout]);
+      const groups = Array.isArray(data?.groups) ? data.groups : [];
+      const matches = groups.flatMap(g => Array.isArray(g.matches) ? g.matches : []);
       if (!matches.length) {
-        resultsList.innerHTML = '<div class="empty">Brak meczów dla wybranego dnia.</div>';
+        resultsList.innerHTML = '<div class="empty">Brak meczów dla wybranego dnia albo backend zwrócił pustą odpowiedź.</div>';
         return;
       }
       resultsList.innerHTML = matches.map(cardHtml).join('');
     } catch (err) {
-      resultsList.innerHTML = `<div class="empty">Nie udało się pobrać danych z backendu. Upewnij się, że FastAPI działa na http://127.0.0.1:8000.</div>`;
+      resultsList.innerHTML = `<div class="empty">Nie udało się pobrać danych z backendu. Sprawdź API_URL i backend na Render. Szczegóły: ${err.message}</div>`;
     }
   }
 
